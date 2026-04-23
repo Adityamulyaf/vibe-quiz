@@ -31,11 +31,11 @@
   <section class="screen active" id="screen-welcome">
     <p class="welcome-eyebrow">Uji Pengetahuanmu</p>
     <h1 class="welcome-title">Seberapa<br>Pintar<br><em>Kamu?</em></h1>
-    <p class="welcome-desc">Jawab 8 pertanyaan seputar Pengetahuan Umum, Sains, dan Teknologi. Setiap soal punya batas waktu 20 detik. Selamat mengerjakan!</p>
+    <p class="welcome-desc">Jawab 30 pertanyaan dari berbagai bidang ilmu!<br> Setiap soal punya batas waktu 20 detik. Selamat mengerjakan!</p>
     <div class="stats-row">
-      <div class="stat-chip"><span class="icon"><i class="fa-solid fa-circle-question"></i></span> 8 Pertanyaan</div>
+      <div class="stat-chip"><span class="icon"><i class="fa-solid fa-circle-question"></i></span> 30 Pertanyaan</div>
       <div class="stat-chip"><span class="icon"><i class="fa-regular fa-clock"></i></span> 20 Detik/Soal</div>
-      <div class="stat-chip"><span class="icon"><i class="fa-solid fa-trophy"></i></span> Skor Maksimal 800</div>
+      <div class="stat-chip"><span class="icon"><i class="fa-solid fa-trophy"></i></span> Skor Maksimal 300</div>
       <div class="stat-chip"><span class="icon"><i class="fa-solid fa-bolt"></i></span> Skor Bonus Waktu</div>
     </div>
     <button class="btn-start" id="btn-start">
@@ -116,57 +116,98 @@
 </div>
 
 <script>
-// Soal-soal
-const allQuestions = [
-  {
-    cat: "Pengetahuan Umum",
-    q: "Ibu kota negara Australia adalah...",
-    opts: ["Sydney", "Melbourne", "Canberra", "Brisbane"],
-    ans: 2
-  },
-  {
-    cat: "Sains",
-    q: "Unsur kimia dengan simbol 'Au' adalah...",
-    opts: ["Perak", "Emas", "Tembaga", "Aluminium"],
-    ans: 1
-  },
-  {
-    cat: "Teknologi",
-    q: "Siapakah pendiri perusahaan Apple Inc.?",
-    opts: ["Bill Gates", "Elon Musk", "Steve Jobs", "Mark Zuckerberg"],
-    ans: 2
-  },
-  {
-    cat: "Pengetahuan Umum",
-    q: "Berapa jumlah benua di dunia?",
-    opts: ["5", "6", "7", "8"],
-    ans: 2
-  },
-  {
-    cat: "Sains",
-    q: "Planet manakah yang paling dekat dengan Matahari?",
-    opts: ["Venus", "Merkurius", "Mars", "Bumi"],
-    ans: 1
-  },
-  {
-    cat: "Sejarah",
-    q: "Pada tahun berapa Indonesia merdeka?",
-    opts: ["1942", "1945", "1949", "1950"],
-    ans: 1
-  },
-  {
-    cat: "Teknologi",
-    q: "Apa kepanjangan dari 'HTML'?",
-    opts: ["HyperText Markup Language", "High Tech Modern Language", "HyperText Media Link", "Home Tool Markup Language"],
-    ans: 0
-  },
-  {
-    cat: "Sains",
-    q: "Berapa kecepatan cahaya dalam vakum (per detik)?",
-    opts: ["100.000 km", "300.000 km", "500.000 km", "1.000.000 km"],
-    ans: 1
-  }
+// Bank soal
+const questionBank = [
+  { id: 1, cat: "Pengetahuan Umum",   text: "Ibu kota negara Australia adalah..." },
+  { id: 2, cat: "Sains",              text: "Unsur kimia dengan simbol 'Au' adalah..." },
+  { id: 3, cat: "Teknologi",          text: "Siapakah pendiri perusahaan Apple Inc.?" },
+  { id: 4, cat: "Pengetahuan Umum",   text: "Berapa jumlah benua di dunia?" },
+  { id: 5, cat: "Sains",              text: "Planet manakah yang paling dekat dengan Matahari?" },
+  { id: 6, cat: "Sejarah",            text: "Pada tahun berapa Indonesia merdeka?" },
+  { id: 7, cat: "Teknologi",          text: "Apa kepanjangan dari 'HTML'?" },
+  { id: 8, cat: "Sains",              text: "Berapa kecepatan cahaya dalam vakum (per detik)?" },
+  { id: 9,  cat: "Geografi",          text: "Sungai terpanjang di dunia adalah..." },
+  { id: 10, cat: "Pengetahuan Umum",  text: "Bahasa resmi negara Brasil adalah..." },
+  { id: 11, cat: "Sains",             text: "Apa nama proses perubahan wujud dari gas menjadi cair?" },
+  { id: 12, cat: "Sejarah",           text: "Siapakah presiden pertama Amerika Serikat?" },
+  { id: 13, cat: "Teknologi",         text: "Apa nama sistem operasi buatan Google untuk smartphone?" },
+  { id: 14, cat: "Matematika",        text: "Berapakah hasil dari akar kuadrat dari 144?" },
+  { id: 15, cat: "Geografi",          text: "Gunung tertinggi di dunia, Mount Everest, terletak di perbatasan negara mana?" },
+  { id: 16, cat: "Sains",             text: "Organ manakah yang memproduksi insulin dalam tubuh manusia?" },
+  { id: 17, cat: "Sejarah",           text: "Perang Dunia II berakhir pada tahun..." },
+  { id: 18, cat: "Teknologi",         text: "Apa kepanjangan dari 'CPU'?" },
+  { id: 19, cat: "Matematika",        text: "Berapakah nilai Pi (π) hingga dua desimal?" },
+  { id: 20, cat: "Sains",             text: "Unsur dengan nomor atom 1 pada tabel periodik adalah..." },
+  { id: 21, cat: "Geografi",          text: "Selat manakah yang memisahkan pulau Jawa dan Sumatera?" },
+  { id: 22, cat: "Sains",             text: "Hukum gravitasi universal dikemukakan oleh..." },
+  { id: 23, cat: "Teknologi",         text: "Protokol transfer data yang digunakan untuk mengirim email adalah..." },
+  { id: 24, cat: "Matematika",        text: "Jika suatu deret geometri memiliki suku pertama 3 dan rasio 4, berapakah suku ke-4?" },
+  { id: 25, cat: "Sejarah",           text: "Perjanjian apakah yang mengakhiri Perang Dunia I?" },
+  { id: 26, cat: "Sains",             text: "Partikel subatomik apakah yang tidak memiliki muatan listrik?" },
+  { id: 27, cat: "Teknologi",         text: "Algoritma pengurutan manakah yang memiliki kompleksitas waktu rata-rata O(n log n)?" },
+  { id: 28, cat: "Matematika",        text: "Berapakah jumlah semua bilangan prima antara 1 dan 20?" },
+  { id: 29, cat: "Sains",             text: "Prinsip ketidakpastian Heisenberg menyatakan bahwa tidak mungkin mengetahui secara bersamaan dengan tepat..." },
+  { id: 30, cat: "Matematika",        text: "Manakah pernyataan yang benar mengenai bilangan Euler (e)?" },
 ];
+
+const answerBank = {
+  1: { options: ["Sydney", "Melbourne", "Canberra", "Brisbane"],      correctIndex: 2 },
+  2: { options: ["Perak", "Emas", "Tembaga", "Aluminium"],            correctIndex: 1 },
+  3: { options: ["Bill Gates", "Elon Musk", "Steve Jobs", "Mark Zuckerberg"],               correctIndex: 2 },
+  4: { options: ["5", "6", "7", "8"],                                 correctIndex: 2 },
+  5: { options: ["Venus", "Merkurius", "Mars", "Bumi"],               correctIndex: 1 },
+  6: { options: ["1942", "1945", "1949", "1950"],                     correctIndex: 1 },
+  7: { options: ["HyperText Markup Language", "High Tech Modern Language", "HyperText Media Link", "Home Tool Markup Language"], correctIndex: 0 },
+  8: { options: ["100.000 km", "300.000 km", "500.000 km", "1.000.000 km"],                 correctIndex: 1 },
+  9:  { options: ["Amazon", "Nil", "Yangtze", "Mississippi"],          correctIndex: 1 },
+  10: { options: ["Spanyol", "Portugis", "Inggris", "Prancis"],        correctIndex: 1 },
+  11: { options: ["Evaporasi", "Sublimasi", "Kondensasi", "Deposisi"], correctIndex: 2 },
+  12: { options: ["Abraham Lincoln", "Thomas Jefferson", "George Washington", "John Adams"], correctIndex: 2 },
+  13: { options: ["iOS", "Android", "HarmonyOS", "Windows Phone"],     correctIndex: 1 },
+  14: { options: ["10", "11", "12", "14"],                             correctIndex: 2 },
+  15: { options: ["Nepal dan Tibet", "India dan Nepal", "Nepal dan Pakistan", "Tibet dan India"], correctIndex: 0 },
+  16: { options: ["Hati", "Ginjal", "Pankreas", "Limpa"],             correctIndex: 2 },
+  17: { options: ["1943", "1944", "1945", "1946"],                     correctIndex: 2 },
+  18: { options: ["Central Processing Unit", "Computer Processing Utility", "Core Processor Unit", "Central Program Unit"], correctIndex: 0 },
+  19: { options: ["3.14", "3.16", "3.12", "3.18"],                    correctIndex: 0 },
+  20: { options: ["Helium", "Oksigen", "Hidrogen", "Litium"],         correctIndex: 2 },
+  21: { options: ["Selat Bali", "Selat Sunda", "Selat Lombok", "Selat Madura"], correctIndex: 1 },
+  22: { options: ["Albert Einstein", "Galileo Galilei", "Isaac Newton", "Nikola Tesla"], correctIndex: 2 },
+  23: { options: ["FTP", "HTTP", "SMTP", "SSH"],                       correctIndex: 2 },
+  24: { options: ["48", "64", "192", "128"],                           correctIndex: 2 },
+  25: { options: ["Perjanjian Westphalia", "Perjanjian Versailles", "Perjanjian Paris", "Perjanjian Geneva"], correctIndex: 1 },
+  26: { options: ["Proton", "Elektron", "Positron", "Neutron"],        correctIndex: 3 },
+  27: { options: ["Bubble sort", "Merge sort", "Insertion sort", "Selection sort"], correctIndex: 1 },
+  28: { options: ["58", "60", "77", "97"],                             correctIndex: 2 },
+  29: { options: [
+        "Massa dan muatan suatu partikel",
+        "Posisi dan momentum suatu partikel",
+        "Energi dan suhu suatu partikel",
+        "Kecepatan dan percepatan suatu partikel"
+      ], correctIndex: 1 },
+  30: { options: [
+        "e adalah bilangan rasional yang nilainya tepat 2.718",
+        "e adalah basis logaritma natural dan merupakan bilangan transendental",
+        "e ditemukan oleh Isaac Newton pada abad ke-17",
+        "e hanya digunakan dalam perhitungan geometri lingkaran"
+      ], correctIndex: 1 },
+};
+
+const allQuestions = questionBank.map(function(question) {
+  const answerData = answerBank[question.id];
+
+  if (!answerData) {
+    throw new Error(`Jawaban untuk soal ID ${question.id} tidak ditemukan.`);
+  }
+
+  return {
+    id: question.id,
+    cat: question.cat,
+    text: question.text,
+    options: answerData.options,
+    correctIndex: answerData.correctIndex
+  };
+});
 
 // state
 let currentQ = 0;
@@ -245,14 +286,14 @@ function loadQuestion() {
   $('#progress-text').text(`Pertanyaan ${currentQ + 1} dari ${total}`);
   $('#score-live').text(`Skor: ${score}`);
   $('#question-cat').text(q.cat);
-  $('#question-text').text(q.q);
+  $('#question-text').text(q.text);
 
   // reset timer
   $('#timer').removeClass('warning danger').find('#timer-count').text(TIME_PER_Q);
 
   // render options
   const $grid = $('#options-grid').empty();
-  q.opts.forEach(function(opt, i) {
+  q.options.forEach(function(opt, i) {
     const $btn = $('<button>')
       .addClass('option-btn')
       .attr('data-index', i)
@@ -290,15 +331,15 @@ function timeOut() {
   answered = true;
   const q = allQuestions[currentQ];
   timeUsed.push(TIME_PER_Q);
-  userAnswers.push({ q: q.q, correct: false, correctAns: q.opts[q.ans], userAns: null });
+  userAnswers.push({ q: q.text, correct: false, correctAns: q.options[q.correctIndex], userAns: null });
 
   // highlight correct answer
-  $(`.option-btn[data-index="${q.ans}"]`).addClass('correct');
+  $(`.option-btn[data-index="${q.correctIndex}"]`).addClass('correct');
   $('.option-btn').prop('disabled', true);
 
   $('#feedback-box')
     .removeClass('correct-fb wrong-fb').addClass('wrong-fb')
-    .html('<i class="fa-regular fa-clock feedback-icon"></i><span>Waktu habis! Jawaban yang benar adalah: <strong>' + q.opts[q.ans] + '</strong></span>')
+    .html('<i class="fa-regular fa-clock feedback-icon"></i><span>Waktu habis! Jawaban yang benar adalah: <strong>' + q.options[q.correctIndex] + '</strong></span>')
     .fadeIn(300);
 
   wrongCount++;
@@ -316,7 +357,7 @@ $(document).on('click', '.option-btn', function() {
   const elapsed = TIME_PER_Q - timeLeft;
   timeUsed.push(elapsed);
 
-  if (selected === q.ans) {
+  if (selected === q.correctIndex) {
     // correct
     const timeBonus = Math.max(0, Math.round((timeLeft / TIME_PER_Q) * 50));
     const gained = 100 + timeBonus;
@@ -324,7 +365,7 @@ $(document).on('click', '.option-btn', function() {
     correctCount++;
 
     $(this).addClass('correct');
-    userAnswers.push({ q: q.q, correct: true, correctAns: q.opts[q.ans], userAns: q.opts[selected] });
+    userAnswers.push({ q: q.text, correct: true, correctAns: q.options[q.correctIndex], userAns: q.options[selected] });
 
     $('#feedback-box')
       .removeClass('wrong-fb').addClass('correct-fb')
@@ -334,12 +375,12 @@ $(document).on('click', '.option-btn', function() {
     // wrong
     wrongCount++;
     $(this).addClass('wrong');
-    $(`.option-btn[data-index="${q.ans}"]`).addClass('correct');
-    userAnswers.push({ q: q.q, correct: false, correctAns: q.opts[q.ans], userAns: q.opts[selected] });
+    $(`.option-btn[data-index="${q.correctIndex}"]`).addClass('correct');
+    userAnswers.push({ q: q.text, correct: false, correctAns: q.options[q.correctIndex], userAns: q.options[selected] });
 
     $('#feedback-box')
       .removeClass('correct-fb').addClass('wrong-fb')
-      .html('<i class="fa-solid fa-circle-xmark feedback-icon"></i><span> Salah! Jawaban yang benar: <strong>' + q.opts[q.ans] + '</strong></span>')
+      .html('<i class="fa-solid fa-circle-xmark feedback-icon"></i><span> Salah! Jawaban yang benar: <strong>' + q.options[q.correctIndex] + '</strong></span>')
       .fadeIn(300);
   }
 
