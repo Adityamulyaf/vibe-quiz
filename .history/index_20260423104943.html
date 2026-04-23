@@ -1,0 +1,395 @@
+﻿<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Vibe Quiz</title>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:ital,wght@0,300;0,400;0,500;1,300&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<div class="blob blob-1"></div>
+<div class="blob blob-2"></div>
+<div class="blob blob-3"></div>
+
+<div class="quiz-wrapper">
+
+  <!-- Header -->
+  <header class="header">
+    <div class="logo">Vibe<span>Quiz</span></div>
+    <div class="header-badge">Quiz Interaktif</div>
+  </header>
+
+  <!-- Welcome Screen -->
+  <section class="screen active" id="screen-welcome">
+    <p class="welcome-eyebrow">Uji Pengetahuanmu</p>
+    <h1 class="welcome-title">Seberapa<br>Pintar<br><em>Kamu?</em></h1>
+    <p class="welcome-desc">Jawab 8 pertanyaan seputar Pengetahuan Umum, Sains, dan Teknologi. Setiap soal punya batas waktu 20 detik. Selamat mengerjakan!</p>
+    <div class="stats-row">
+      <div class="stat-chip"><span class="icon"><i class="fa-solid fa-circle-question"></i></span> 8 Pertanyaan</div>
+      <div class="stat-chip"><span class="icon"><i class="fa-regular fa-clock"></i></span> 20 Detik/Soal</div>
+      <div class="stat-chip"><span class="icon"><i class="fa-solid fa-trophy"></i></span> Skor Maksimal 800</div>
+      <div class="stat-chip"><span class="icon"><i class="fa-solid fa-bolt"></i></span> Skor Bonus Waktu</div>
+    </div>
+    <button class="btn-start" id="btn-start">
+      Mulai Kuis <span class="arrow"><i class="fa-solid fa-arrow-right"></i></span>
+    </button>
+  </section>
+
+  <!-- Quiz -->
+  <section class="screen" id="screen-quiz">
+
+    <div class="progress-bar-wrapper">
+      <div class="progress-bar-fill" id="progress-fill" style="width:0%"></div>
+    </div>
+    <div class="progress-label">
+      <span id="progress-text">Pertanyaan 1 dari 8</span>
+      <span id="score-live">Skor: 0</span>
+    </div>
+
+    <div class="timer-row">
+      <div class="timer" id="timer">
+        <span class="timer-icon"><i class="fa-regular fa-clock"></i></span>
+        <span id="timer-count">20</span>
+      </div>
+    </div>
+
+    <div class="question-card">
+      <p class="question-cat" id="question-cat"></p>
+      <p class="question-text" id="question-text"></p>
+    </div>
+
+    <div class="options-grid" id="options-grid"></div>
+
+    <div class="feedback-box" id="feedback-box">
+      <span class="feedback-icon" id="feedback-icon"></span>
+      <span id="feedback-text"></span>
+    </div>
+
+    <button class="btn-next" id="btn-next">
+      Soal Berikutnya <i class="fa-solid fa-arrow-right"></i>
+    </button>
+
+  </section>
+
+  <!-- Result -->
+  <section class="screen" id="screen-result">
+    <div class="result-header">
+      <i class="fa-solid fa-trophy result-emoji" id="result-icon"></i>
+      <h2 class="result-title" id="result-title">Luar Biasa!</h2>
+      <p class="result-subtitle" id="result-subtitle">Kamu memang juara sejati.</p>
+    </div>
+
+    <div class="score-display">
+      <span class="score-number" id="final-score">0</span>
+      <span class="score-label">Total Skor Akhir</span>
+    </div>
+
+    <div class="stats-grid">
+      <div class="stat-box">
+        <span class="stat-value" id="stat-correct" style="color:var(--success)">0</span>
+        <div class="stat-name">Benar</div>
+      </div>
+      <div class="stat-box">
+        <span class="stat-value" id="stat-wrong" style="color:var(--danger)">0</span>
+        <div class="stat-name">Salah</div>
+      </div>
+      <div class="stat-box">
+        <span class="stat-value" id="stat-time" style="color:var(--accent2)">0s</span>
+        <div class="stat-name">Rata-rata Waktu</div>
+      </div>
+    </div>
+
+    <div class="review-title"><i class="fa-regular fa-clipboard"></i> Review Jawaban</div>
+    <div id="review-list"></div>
+
+    <button class="btn-restart" id="btn-restart"><i class="fa-solid fa-rotate-right"></i> Main Lagi</button>
+  </section>
+
+</div>
+
+<script>
+// Soal-soal
+const allQuestions = [
+  {
+    cat: "Pengetahuan Umum",
+    q: "Ibu kota negara Australia adalah...",
+    opts: ["Sydney", "Melbourne", "Canberra", "Brisbane"],
+    ans: 2
+  },
+  {
+    cat: "Sains",
+    q: "Unsur kimia dengan simbol 'Au' adalah...",
+    opts: ["Perak", "Emas", "Tembaga", "Aluminium"],
+    ans: 1
+  },
+  {
+    cat: "Teknologi",
+    q: "Siapakah pendiri perusahaan Apple Inc.?",
+    opts: ["Bill Gates", "Elon Musk", "Steve Jobs", "Mark Zuckerberg"],
+    ans: 2
+  },
+  {
+    cat: "Pengetahuan Umum",
+    q: "Berapa jumlah benua di dunia?",
+    opts: ["5", "6", "7", "8"],
+    ans: 2
+  },
+  {
+    cat: "Sains",
+    q: "Planet manakah yang paling dekat dengan Matahari?",
+    opts: ["Venus", "Merkurius", "Mars", "Bumi"],
+    ans: 1
+  },
+  {
+    cat: "Sejarah",
+    q: "Pada tahun berapa Indonesia merdeka?",
+    opts: ["1942", "1945", "1949", "1950"],
+    ans: 1
+  },
+  {
+    cat: "Teknologi",
+    q: "Apa kepanjangan dari 'HTML'?",
+    opts: ["HyperText Markup Language", "High Tech Modern Language", "HyperText Media Link", "Home Tool Markup Language"],
+    ans: 0
+  },
+  {
+    cat: "Sains",
+    q: "Berapa kecepatan cahaya dalam vakum (per detik)?",
+    opts: ["100.000 km", "300.000 km", "500.000 km", "1.000.000 km"],
+    ans: 1
+  }
+];
+
+// state
+let currentQ = 0;
+let score = 0;
+let correctCount = 0;
+let wrongCount = 0;
+let timerInterval = null;
+let timeLeft = 20;
+let timeUsed = [];
+let answered = false;
+let userAnswers = [];
+
+const LABELS = ['A', 'B', 'C', 'D'];
+const TIME_PER_Q = 20;
+
+function shuffle(arr) {
+  return [...arr].sort(() => Math.random() - 0.5);
+}
+
+function initQuiz() {
+  currentQ = 0;
+  score = 0;
+  correctCount = 0;
+  wrongCount = 0;
+  timeUsed = [];
+  userAnswers = [];
+  loadQuestion();
+}
+
+// load atas
+function loadQuestion() {
+  answered = false;
+  timeLeft = TIME_PER_Q;
+
+  const q = allQuestions[currentQ];
+  const total = allQuestions.length;
+  const pct = (currentQ / total) * 100;
+
+  $('#progress-fill').css('width', pct + '%');
+  $('#progress-text').text(`Pertanyaan ${currentQ + 1} dari ${total}`);
+  $('#score-live').text(`Skor: ${score}`);
+  $('#question-cat').text(q.cat);
+  $('#question-text').text(q.q);
+
+  // reset timer
+  $('#timer').removeClass('warning danger').find('#timer-count').text(TIME_PER_Q);
+
+  // render options
+  const $grid = $('#options-grid').empty();
+  q.opts.forEach(function(opt, i) {
+    const $btn = $('<button>')
+      .addClass('option-btn')
+      .attr('data-index', i)
+      .html(`<span class="option-label">${LABELS[i]}</span><span>${opt}</span>`);
+    $grid.append($btn);
+  });
+
+  // reset feedback, next button
+  $('#feedback-box').hide().removeClass('correct-fb wrong-fb');
+  $('#btn-next').hide();
+
+  // start timer
+  clearInterval(timerInterval);
+  timerInterval = setInterval(tickTimer, 1000);
+}
+
+// timer
+function tickTimer() {
+  timeLeft--;
+  $('#timer-count').text(timeLeft);
+
+  if (timeLeft <= 10 && timeLeft > 5) {
+    $('#timer').addClass('warning').removeClass('danger');
+  } else if (timeLeft <= 5) {
+    $('#timer').addClass('danger').removeClass('warning');
+  }
+
+  if (timeLeft <= 0) {
+    clearInterval(timerInterval);
+    if (!answered) timeOut();
+  }
+}
+
+function timeOut() {
+  answered = true;
+  const q = allQuestions[currentQ];
+  timeUsed.push(TIME_PER_Q);
+  userAnswers.push({ q: q.q, correct: false, correctAns: q.opts[q.ans], userAns: null });
+
+  // Highlight correct answer
+  $(`.option-btn[data-index="${q.ans}"]`).addClass('correct');
+  $('.option-btn').prop('disabled', true);
+
+  $('#feedback-box')
+    .removeClass('correct-fb wrong-fb').addClass('wrong-fb')
+    .html('<i class="fa-regular fa-clock feedback-icon"></i><span>Waktu habis! Jawaban yang benar adalah: <strong>' + q.opts[q.ans] + '</strong></span>')
+    .fadeIn(300);
+
+  wrongCount++;
+  setTimeout(showNext, 1800);
+}
+
+// â•â• ANSWER CLICK â•â•
+$(document).on('click', '.option-btn', function() {
+  if (answered) return;
+  answered = true;
+  clearInterval(timerInterval);
+
+  const selected = parseInt($(this).attr('data-index'));
+  const q = allQuestions[currentQ];
+  const elapsed = TIME_PER_Q - timeLeft;
+  timeUsed.push(elapsed);
+
+  if (selected === q.ans) {
+    // Correct
+    const timeBonus = Math.max(0, Math.round((timeLeft / TIME_PER_Q) * 50));
+    const gained = 100 + timeBonus;
+    score += gained;
+    correctCount++;
+
+    $(this).addClass('correct');
+    userAnswers.push({ q: q.q, correct: true, correctAns: q.opts[q.ans], userAns: q.opts[selected] });
+
+    $('#feedback-box')
+      .removeClass('wrong-fb').addClass('correct-fb')
+      .html(`<i class="fa-solid fa-circle-check feedback-icon"></i><span>Jawaban benar! <strong>+${gained} poin</strong> (termasuk bonus waktu +${timeBonus})</span>`)
+      .fadeIn(300);
+  } else {
+    // Wrong
+    wrongCount++;
+    $(this).addClass('wrong');
+    $(`.option-btn[data-index="${q.ans}"]`).addClass('correct');
+    userAnswers.push({ q: q.q, correct: false, correctAns: q.opts[q.ans], userAns: q.opts[selected] });
+
+    $('#feedback-box')
+      .removeClass('correct-fb').addClass('wrong-fb')
+      .html('<i class="fa-solid fa-circle-xmark feedback-icon"></i><span>Salah! Jawaban yang benar: <strong>' + q.opts[q.ans] + '</strong></span>')
+      .fadeIn(300);
+  }
+
+  $('.option-btn').prop('disabled', true);
+  $('#score-live').text(`Skor: ${score}`);
+  $('#btn-next').fadeIn(300);
+});
+
+// â•â• NEXT QUESTION â•â•
+$('#btn-next').on('click', showNext);
+
+function showNext() {
+  currentQ++;
+  if (currentQ < allQuestions.length) {
+    loadQuestion();
+  } else {
+    showResult();
+  }
+}
+
+// â•â• RESULT â•â•
+function showResult() {
+  clearInterval(timerInterval);
+  $('#progress-fill').css('width', '100%');
+
+  // Rating
+  const pct = correctCount / allQuestions.length;
+  let iconClass, title, subtitle;
+  if (pct === 1)       { iconClass = 'fa-solid fa-trophy'; title = 'Sempurna!'; subtitle = 'Kamu menjawab semua dengan benar. Luar biasa!'; }
+  else if (pct >= 0.75){ iconClass = 'fa-solid fa-medal'; title = 'Hebat!'; subtitle = 'Kamu hampir sempurna. Pertahankan!'; }
+  else if (pct >= 0.5) { iconClass = 'fa-solid fa-thumbs-up'; title = 'Lumayan!'; subtitle = 'Lebih dari setengah benar. Terus belajar!'; }
+  else if (pct >= 0.25){ iconClass = 'fa-solid fa-book-open'; title = 'Perlu Belajar'; subtitle = 'Masih banyak yang bisa dipelajari. Semangat!'; }
+  else                  { iconClass = 'fa-solid fa-face-smile'; title = 'Coba Lagi!'; subtitle = 'Jangan menyerah, coba lagi dan kamu pasti bisa!'; }
+
+  $('#result-icon').attr('class', iconClass + ' result-emoji');
+  $('#result-title').text(title);
+  $('#result-subtitle').text(subtitle);
+  $('#final-score').text(score);
+  $('#stat-correct').text(correctCount);
+  $('#stat-wrong').text(wrongCount);
+
+  const avgTime = timeUsed.length
+    ? (timeUsed.reduce((a, b) => a + b, 0) / timeUsed.length).toFixed(1)
+    : 0;
+  $('#stat-time').text(avgTime + 's');
+
+  // Build review list
+  const $list = $('#review-list').empty();
+  userAnswers.forEach(function(ua) {
+    const dotClass = ua.correct ? 'ok' : 'bad';
+    const dotIcon = ua.correct
+      ? '<i class="fa-solid fa-check"></i>'
+      : '<i class="fa-solid fa-xmark"></i>';
+    const ansHtml = ua.correct
+      ? `<div class="review-ans">Jawaban kamu: <span>${ua.userAns}</span></div>`
+      : `<div class="review-ans">Jawaban benar: <span>${ua.correctAns}</span>${ua.userAns ? ` | Jawabanmu: ${ua.userAns}` : ' (timeout)'}</div>`;
+    $list.append(`
+      <div class="review-item">
+        <div class="review-dot ${dotClass}">${dotIcon}</div>
+        <div>
+          <div class="review-q">${ua.q}</div>
+          ${ansHtml}
+        </div>
+      </div>
+    `);
+  });
+
+  // Switch screen
+  showScreen('screen-result');
+}
+
+// â•â• SCREEN NAVIGATION â•â•
+function showScreen(id) {
+  $('.screen').removeClass('active').hide();
+  $('#' + id).addClass('active').show();
+}
+
+// â•â• BUTTON EVENTS â•â•
+$('#btn-start').on('click', function() {
+  showScreen('screen-quiz');
+  initQuiz();
+});
+
+$('#btn-restart').on('click', function() {
+  showScreen('screen-welcome');
+});
+
+// Initial state
+$('.screen').hide();
+$('#screen-welcome').addClass('active').show();
+</script>
+</body>
+</html>
