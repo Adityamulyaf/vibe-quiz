@@ -15,6 +15,10 @@
 <div class="blob blob-2"></div>
 <div class="blob blob-3"></div>
 
+<div class="start-countdown-overlay" id="start-countdown-overlay" aria-hidden="true">
+  <div class="start-countdown-text" id="start-countdown-text">3</div>
+</div>
+
 <div class="quiz-wrapper">
 
   <!-- Header -->
@@ -174,9 +178,45 @@ let timeLeft = 20;
 let timeUsed = [];
 let answered = false;
 let userAnswers = [];
+let isStarting = false;
 
 const LABELS = ['A', 'B', 'C', 'D'];
 const TIME_PER_Q = 20;
+const START_COUNTDOWN_STEPS = [
+  { text: '3', className: 'countdown-white' },
+  { text: '2', className: 'countdown-blue' },
+  { text: '1', className: 'countdown-orange' },
+  { text: 'Mulai', className: 'countdown-black' }
+];
+
+function runStartCountdown(onDone) {
+  const $overlay = $('#start-countdown-overlay');
+  const $text = $('#start-countdown-text');
+  const countdownClasses = 'countdown-white countdown-blue countdown-orange countdown-black';
+  let stepIndex = 0;
+
+  function showStep(index) {
+    const step = START_COUNTDOWN_STEPS[index];
+    $overlay.removeClass(countdownClasses).addClass(step.className);
+    $text.text(step.text);
+  }
+
+  $overlay.addClass('active').attr('aria-hidden', 'false');
+  showStep(stepIndex);
+
+  function nextStep() {
+    stepIndex++;
+    if (stepIndex >= START_COUNTDOWN_STEPS.length) {
+      $overlay.removeClass('active').removeClass(countdownClasses).attr('aria-hidden', 'true');
+      onDone();
+      return;
+    }
+    showStep(stepIndex);
+    setTimeout(nextStep, 700);
+  }
+
+  setTimeout(nextStep, 700);
+}
 
 function shuffle(arr) {
   return [...arr].sort(() => Math.random() - 0.5);
@@ -376,8 +416,13 @@ function showScreen(id) {
 }
 
 $('#btn-start').on('click', function() {
-  showScreen('screen-quiz');
-  initQuiz();
+  if (isStarting) return;
+  isStarting = true;
+  runStartCountdown(function() {
+    showScreen('screen-quiz');
+    initQuiz();
+    isStarting = false;
+  });
 });
 
 $('#btn-restart').on('click', function() {

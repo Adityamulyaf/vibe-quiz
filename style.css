@@ -49,6 +49,29 @@
   .blob-2 { width: 400px; height: 400px; background: var(--accent2); bottom: -100px; left: -100px; }
   .blob-3 { width: 300px; height: 300px; background: var(--gold); top: 50%; left: 50%; transform: translate(-50%,-50%); }
 
+  .start-countdown-overlay {
+    position: fixed;
+    inset: 0;
+    z-index: 9999;
+    display: none;
+    align-items: center;
+    justify-content: center;
+    transition: background-color 0.2s ease, color 0.2s ease;
+  }
+  .start-countdown-overlay.active { display: flex; }
+  .start-countdown-text {
+    font-family: var(--font-display);
+    font-weight: 800;
+    letter-spacing: -2px;
+    font-size: clamp(72px, 20vw, 240px);
+    text-transform: uppercase;
+    user-select: none;
+  }
+  .start-countdown-overlay.countdown-white { background: #ffffff; color: #0d0d0d; }
+  .start-countdown-overlay.countdown-blue { background: #2f6ee8; color: #ffffff; }
+  .start-countdown-overlay.countdown-orange { background: #e85d2f; color: #ffffff; }
+  .start-countdown-overlay.countdown-black { background: #0d0d0d; color: #f5f0e8; }
+
   /* Main container */
   .quiz-wrapper {
     position: relative;
@@ -195,6 +218,10 @@
     margin-right: auto;
   }
   #screen-welcome .stats-row {
+    justify-content: center;
+  }
+
+  #screen-quiz.active {
     justify-content: center;
   }
 
@@ -551,6 +578,7 @@
   .screen.active { animation: fadeSlide 0.4s ease; }
 
   @media (max-height: 780px) {
+    #screen-quiz.active { justify-content: center; }
     .welcome-title { font-size: clamp(28px, 5vw, 42px); }
     .welcome-desc { font-size: 14px; line-height: 1.45; margin-bottom: 14px; }
     .stats-row { margin-bottom: 12px; }
